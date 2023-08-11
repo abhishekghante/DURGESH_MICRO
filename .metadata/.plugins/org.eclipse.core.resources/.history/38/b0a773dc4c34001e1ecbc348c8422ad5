@@ -1,0 +1,16 @@
+package com.micro.user.service.external.service;
+
+import java.util.List;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import com.micro.user.service.entity.Rating;
+
+@FeignClient(name = "")
+public interface RatingService {
+	
+	@GetMapping("/http://localhost:8083/ratings/user")
+	List<Rating> getRatingByUserId(String userId);
+
+}

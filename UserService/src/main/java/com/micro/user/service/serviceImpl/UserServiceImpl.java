@@ -1,0 +1,59 @@
+package com.micro.user.service.serviceImpl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.micro.user.service.entity.Hotel;
+import com.micro.user.service.entity.Rating;
+import com.micro.user.service.entity.User;
+import com.micro.user.service.exception.ResourceNotFoundException;
+import com.micro.user.service.external.service.HotelService;
+import com.micro.user.service.external.service.RatingService;
+import com.micro.user.service.repository.UserRepository;
+import com.micro.user.service.service.UserService;
+
+
+@Service
+public class UserServiceImpl implements UserService {
+		
+	@Autowired
+	UserRepository userRepo;
+	
+	@Autowired
+	RatingService ratingService;
+	
+	@Autowired
+	HotelService hotelService;
+	
+	@Override
+	public User save(User user) {
+		user.setUserId(String.valueOf(UUID.randomUUID()));
+		return userRepo.save(user);
+	}
+
+	@Override
+	public Optional<User> findByID(String userID) {
+		User user = userRepo.findById(userID).orElseThrow(()-> new ResourceNotFoundException("Given userId not present in our database"));
+	    List<Rating> rating = ratingService.getRatingByUserId(user.getUserId());
+	    
+	    for(Rating allRating : rating) {
+	    	 Hotel hotel = hotelService.getHotelByID(allRating.getHotelId());
+	    	 
+	    }
+	    user.setRating((ArrayList<Rating>) rating);
+		
+		return Optional.ofNullable(user);
+	}
+
+	@Override
+	public List<User> getAllUsers() {
+		return userRepo.findAll();
+	}
+
+	
+}

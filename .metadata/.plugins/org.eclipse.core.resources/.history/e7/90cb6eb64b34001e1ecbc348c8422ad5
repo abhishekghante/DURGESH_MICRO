@@ -1,0 +1,5 @@
+package com.micro.user.service.external.service;
+
+public interface RatingService {
+
+}
